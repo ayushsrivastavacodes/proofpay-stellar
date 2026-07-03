@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ProofPay - Compliance-private payroll on Stellar</title>
+    <meta
+      name="description"
+      content="ProofPay is a Stellar hackathon project for private payroll batches with public compliance checks, Noir proofs, and Soroban verification."
+    />
+    <meta property="og:title" content="ProofPay" />
+    <meta
+      property="og:description"
+      content="Private contractor payouts with public compliance checks and selective audit receipts on Stellar."
+    />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.2/anime.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Newsreader:opsz,wght@6..72,700&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['"DM Sans"', "ui-sans-serif", "system-ui", "sans-serif"],
+              serif: ['"Newsreader"', "Georgia", "serif"],
+              mono: ['"SF Mono"', '"Geist Mono"', "ui-monospace", "monospace"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      :root {
+        --canvas: #f7f6f3;
+        --surface: #ffffff;
+        --surface-soft: #fbfbfa;
+        --ink: #202322;
+        --muted: #787774;
+        --line: #e8e6e1;
+        --line-strong: #d8d5cd;
+        --accent: #111111;
+        --green-bg: #edf3ec;
+        --green-text: #346538;
+        --blue-bg: #e1f3fe;
+        --blue-text: #1f6c9f;
+        --yellow-bg: #fbf3db;
+        --yellow-text: #956400;
+      }
+
+      .dark {
+        --canvas: #151514;
+        --surface: #1d1d1b;
+        --surface-soft: #232320;
+        --ink: #f7f6f3;
+        --muted: #b7b3aa;
+        --line: #34332f;
+        --line-strong: #46443f;
+        --accent: #f7f6f3;
+        --green-bg: #223025;
+        --green-text: #b8dfbc;
+        --blue-bg: #1d2d36;
+        --blue-text: #afd8ef;
+        --yellow-bg: #332b1c;
+        --yellow-text: #ebcf8a;
+      }
+
+      body {
+        background: var(--canvas);
+        color: var(--ink);
+      }
+
+      .reveal {
+        opacity: 1;
+        transform: translateY(0);
+        transition:
+          opacity 600ms cubic-bezier(0.16, 1, 0.3, 1),
+          transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      .surface {
+        border: 1px solid var(--line);
+        background: var(--surface);
+        border-radius: 8px;
+      }
+
+      .soft {
+        background: var(--surface-soft);
+      }
+
+      .tag {
+        border-radius: 999px;
+        padding: 6px 10px;
+        font: 700 11px/1 "SF Mono", "Geist Mono", ui-monospace, monospace;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+      }
+
+      .btn {
+        border-radius: 6px;
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 18px;
+        font-weight: 700;
+        transition:
+          transform 160ms ease,
+          background 160ms ease,
+          color 160ms ease;
+      }
+
+      .btn:active {
+        transform: scale(0.98);
+      }
+
+      .btn-primary {
+        background: var(--accent);
+        color: var(--canvas);
+      }
+
+      .btn-secondary {
+        border: 1px solid var(--line-strong);
+        background: var(--surface);
+        color: var(--ink);
+      }
+
+      .demo-frame {
+        width: 1280px;
+        height: 820px;
+        transform: scale(0.72);
+        transform-origin: top left;
+        border: 0;
+      }
+
+      @media (max-width: 1024px) {
+        .demo-crop {
+          height: 520px;
+        }
+
+        .demo-frame {
+          transform: scale(0.56);
+        }
+      }
+
+      @media (max-width: 640px) {
+        .demo-crop {
+          height: 430px;
+        }
+
+        .demo-frame {
+          transform: scale(0.36);
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .reveal {
+          opacity: 1;
+          transform: none;
+          transition: none;
+        }
+      }
+    </style>
+  </head>
+  <body class="font-sans antialiased">
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-black"
+      >Skip to content</a
+    >
+
+    <header class="sticky top-0 z-40 border-b backdrop-blur" style="border-color: var(--line); background: color-mix(in srgb, var(--canvas) 88%, transparent)">
+      <nav class="mx-auto flex h-16 w-[min(1180px,calc(100vw-32px))] items-center justify-between">
+        <a href="#" class="font-serif text-2xl font-bold tracking-[-0.04em]">ProofPay</a>
+        <div class="hidden items-center gap-7 text-sm text-[color:var(--muted)] md:flex">
+          <a href="#proof" class="hover:text-[color:var(--ink)]">Proof</a>
+          <a href="#workflow" class="hover:text-[color:var(--ink)]">Workflow</a>
+          <a href="#artifacts" class="hover:text-[color:var(--ink)]">Artifacts</a>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="theme-toggle" class="btn btn-secondary min-h-9 px-3 text-sm" type="button">
+            Theme
+          </button>
+          <a href="./index.html" class="btn btn-primary min-h-9 text-sm">Open demo</a>
+        </div>
+      </nav>
+    </header>
+
+    <main id="main">
+      <section class="mx-auto grid min-h-[calc(100dvh-64px)] w-[min(1180px,calc(100vw-32px))] items-center gap-12 py-20 lg:grid-cols-[0.9fr_1.1fr]">
+        <div class="reveal">
+          <p class="tag mb-6 inline-flex bg-[color:var(--green-bg)] text-[color:var(--green-text)]">
+            Stellar ZK payroll
+          </p>
+          <h1 class="font-serif text-[clamp(56px,8vw,112px)] font-bold leading-[0.92] tracking-[-0.055em]">
+            Private payroll, public proof.
+          </h1>
+          <p class="mt-7 max-w-xl text-lg leading-8 text-[color:var(--muted)]">
+            ProofPay lets employers submit contractor payment batches while keeping individual amounts private and compliance checks verifiable.
+          </p>
+          <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+            <a href="./index.html" class="btn btn-primary">Run the demo</a>
+            <a href="https://github.com/ayushsrivastavacodes/proofpay-stellar" class="btn btn-secondary">View repo</a>
+          </div>
+        </div>
+
+        <div class="reveal surface overflow-hidden p-3">
+          <div class="mb-3 flex h-9 items-center gap-2 border-b px-2" style="border-color: var(--line)">
+            <span class="h-2.5 w-2.5 rounded-full bg-[#e6e1d8]"></span>
+            <span class="h-2.5 w-2.5 rounded-full bg-[#e6e1d8]"></span>
+            <span class="h-2.5 w-2.5 rounded-full bg-[#e6e1d8]"></span>
+            <span class="ml-3 font-mono text-xs text-[color:var(--muted)]">frontend/index.html</span>
+          </div>
+          <div class="demo-crop h-[590px] overflow-hidden rounded-md border" style="border-color: var(--line)">
+            <iframe class="demo-frame" src="./index.html" title="ProofPay interactive demo preview"></iframe>
+          </div>
+        </div>
+      </section>
+
+      <section id="proof" class="mx-auto w-[min(1180px,calc(100vw-32px))] py-20">
+        <div class="reveal max-w-3xl">
+          <p class="tag mb-5 inline-flex bg-[color:var(--blue-bg)] text-[color:var(--blue-text)]">
+            What the proof carries
+          </p>
+          <h2 class="font-serif text-5xl font-bold leading-tight tracking-[-0.045em]">
+            The chain sees the policy result, not the salary table.
+          </h2>
+        </div>
+        <div class="mt-10 grid gap-4 md:grid-cols-3">
+          <article class="reveal surface p-7">
+            <h3 class="text-xl font-bold tracking-[-0.025em]">Hidden amounts</h3>
+            <p class="mt-4 leading-7 text-[color:var(--muted)]">
+              Private payouts sum to a public total and stay under the configured cap.
+            </p>
+          </article>
+          <article class="reveal surface p-7">
+            <h3 class="text-xl font-bold tracking-[-0.025em]">Compliance roots</h3>
+            <p class="mt-4 leading-7 text-[color:var(--muted)]">
+              Recipients bind to approved and blocked-list roots without exposing the full list.
+            </p>
+          </article>
+          <article class="reveal surface p-7">
+            <h3 class="text-xl font-bold tracking-[-0.025em]">Audit receipts</h3>
+            <p class="mt-4 leading-7 text-[color:var(--muted)]">
+              A selected payout can be disclosed to an auditor without revealing the whole batch.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="workflow" class="mx-auto w-[min(1180px,calc(100vw-32px))] py-20">
+        <div class="reveal surface grid overflow-hidden lg:grid-cols-[0.85fr_1.15fr]">
+          <div class="soft border-b p-8 lg:border-b-0 lg:border-r" style="border-color: var(--line)">
+            <p class="tag mb-5 inline-flex bg-[color:var(--yellow-bg)] text-[color:var(--yellow-text)]">
+              Workflow
+            </p>
+            <h2 class="font-serif text-5xl font-bold leading-tight tracking-[-0.045em]">
+              Built for the hackathon demo path.
+            </h2>
+          </div>
+          <div class="divide-y" style="border-color: var(--line)">
+            <div class="p-8">
+              <h3 class="font-bold">Generate a Noir proof</h3>
+              <p class="mt-2 leading-7 text-[color:var(--muted)]">
+                The repo includes a real UltraHonk proof flow and exported verifier artifacts.
+              </p>
+            </div>
+            <div class="p-8">
+              <h3 class="font-bold">Compile the Soroban adapter</h3>
+              <p class="mt-2 leading-7 text-[color:var(--muted)]">
+                The ProofPay contract builds to wasm and calls an on-chain verifier adapter.
+              </p>
+            </div>
+            <div class="p-8">
+              <h3 class="font-bold">Run the browser demo</h3>
+              <p class="mt-2 leading-7 text-[color:var(--muted)]">
+                The UI demonstrates witness checks, submission state, and selective disclosure.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="artifacts" class="mx-auto w-[min(1180px,calc(100vw-32px))] py-20">
+        <div class="reveal grid gap-4 md:grid-cols-3">
+          <div class="surface p-7">
+            <p class="font-mono text-xs text-[color:var(--muted)]">Proof</p>
+            <strong class="mt-3 block text-3xl tracking-[-0.04em]">14.3 KB</strong>
+            <code class="mt-3 block break-all font-mono text-xs text-[color:var(--muted)]"
+              >artifacts/noir/payroll_batch/proof</code
+            >
+          </div>
+          <div class="surface p-7">
+            <p class="font-mono text-xs text-[color:var(--muted)]">Public inputs</p>
+            <strong class="mt-3 block text-3xl tracking-[-0.04em]">160 B</strong>
+            <code class="mt-3 block break-all font-mono text-xs text-[color:var(--muted)]"
+              >artifacts/noir/payroll_batch/public_inputs</code
+            >
+          </div>
+          <div class="surface p-7">
+            <p class="font-mono text-xs text-[color:var(--muted)]">Verifying key</p>
+            <strong class="mt-3 block text-3xl tracking-[-0.04em]">1.7 KB</strong>
+            <code class="mt-3 block break-all font-mono text-xs text-[color:var(--muted)]"
+              >artifacts/noir/payroll_batch/vk</code
+            >
+          </div>
+        </div>
+      </section>
+
+      <section class="mx-auto w-[min(1180px,calc(100vw-32px))] py-20">
+        <div class="reveal surface flex flex-col items-start justify-between gap-8 p-8 md:flex-row md:items-center">
+          <div>
+            <h2 class="font-serif text-5xl font-bold leading-tight tracking-[-0.045em]">
+              Review the proof path, then run it.
+            </h2>
+            <p class="mt-4 max-w-2xl leading-7 text-[color:var(--muted)]">
+              The landing page explains the project. The demo page shows the end-to-end product flow.
+            </p>
+          </div>
+          <a href="./index.html" class="btn btn-primary shrink-0">Open demo</a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="border-t py-8" style="border-color: var(--line)">
+      <div class="mx-auto flex w-[min(1180px,calc(100vw-32px))] flex-col justify-between gap-4 text-sm text-[color:var(--muted)] md:flex-row">
+        <span>ProofPay for Stellar Hacks</span>
+        <a href="https://github.com/ayushsrivastavacodes/proofpay-stellar" class="hover:text-[color:var(--ink)]">
+          GitHub repository
+        </a>
+      </div>
+    </footer>
+
+    <script>
+      const savedTheme = localStorage.getItem("proofpay-theme");
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
+        document.documentElement.classList.add("dark");
+      }
+
+      document.getElementById("theme-toggle").addEventListener("click", () => {
+        document.documentElement.classList.toggle("dark");
+        localStorage.setItem(
+          "proofpay-theme",
+          document.documentElement.classList.contains("dark") ? "dark" : "light"
+        );
+      });
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) entry.target.classList.add("active");
+          });
+        },
+        { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
+      );
+
+      document.querySelectorAll(".reveal").forEach((element) => observer.observe(element));
+
+      if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches && window.anime) {
+        anime({
+          targets: ".tag, h1, .lede, .btn",
+          opacity: [0, 1],
+          translateY: [10, 0],
+          delay: anime.stagger(70),
+          easing: "easeOutCubic",
+          duration: 700,
+        });
+      }
+    </script>
+  </body>
+</html>

@@ -8,19 +8,25 @@
   </head>
   <body>
     <main class="shell">
-      <section class="topbar">
+      <section class="topbar" aria-label="ProofPay overview">
         <div>
-          <p class="eyebrow">Stellar Testnet Demo</p>
+          <p class="eyebrow">Stellar ZK payroll</p>
           <h1>ProofPay</h1>
+          <p class="lede">
+            Private contractor payouts with public compliance checks and selective audit receipts.
+          </p>
         </div>
-        <div class="network-chip">
-          <span></span>
-          Soroban verifier ready
+        <div class="status-stack" aria-label="Project verification status">
+          <div class="network-chip">
+            <span></span>
+            Soroban wasm builds
+          </div>
+          <div class="network-chip muted-chip">Noir UltraHonk proof verified</div>
         </div>
       </section>
 
       <section class="workspace">
-        <aside class="rail">
+        <aside class="rail" aria-label="Batch controls">
           <div class="metric">
             <span>Batch</span>
             <strong id="batch-id">-</strong>
@@ -37,6 +43,7 @@
             <span>Recipients</span>
             <strong id="count">-</strong>
           </div>
+          <p id="action-note" class="action-note">Generate the proof before submitting the batch.</p>
           <button id="prove-button" class="primary-button">Generate proof</button>
           <button id="submit-button" class="secondary-button" disabled>Submit batch</button>
         </aside>
@@ -44,7 +51,7 @@
         <section class="panel ledger-panel">
           <div class="panel-head">
             <div>
-              <p class="eyebrow">Private rows</p>
+              <p class="section-label">Private rows</p>
               <h2>Payroll batch</h2>
             </div>
             <span id="batch-state" class="state-pill">Draft</span>
@@ -68,7 +75,7 @@
         <section class="panel proof-panel">
           <div class="panel-head">
             <div>
-              <p class="eyebrow">Public inputs</p>
+              <p class="section-label">Public inputs</p>
               <h2>Verifier payload</h2>
             </div>
           </div>
@@ -88,7 +95,7 @@
         <section class="panel auditor-panel">
           <div class="panel-head">
             <div>
-              <p class="eyebrow">Selective disclosure</p>
+              <p class="section-label">Selective disclosure</p>
               <h2>Auditor receipt</h2>
             </div>
             <button id="receipt-button" class="icon-button" disabled title="Generate receipt">
@@ -96,6 +103,32 @@
             </button>
           </div>
           <pre id="receipt-output">Submit a batch, then generate an auditor receipt.</pre>
+        </section>
+
+        <section class="panel artifact-panel">
+          <div class="panel-head">
+            <div>
+              <p class="section-label">Real proof artifacts</p>
+              <h2>Noir output</h2>
+            </div>
+          </div>
+          <div class="artifact-grid">
+            <div>
+              <span>Proof</span>
+              <strong>14.3 KB</strong>
+              <code>artifacts/noir/payroll_batch/proof</code>
+            </div>
+            <div>
+              <span>Public inputs</span>
+              <strong>160 B</strong>
+              <code>artifacts/noir/payroll_batch/public_inputs</code>
+            </div>
+            <div>
+              <span>Verifying key</span>
+              <strong>1.7 KB</strong>
+              <code>artifacts/noir/payroll_batch/vk</code>
+            </div>
+          </div>
         </section>
       </section>
     </main>

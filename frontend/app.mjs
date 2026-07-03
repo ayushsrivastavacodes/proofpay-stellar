@@ -145,14 +145,14 @@ async function createDisclosureReceipt(payout) {
   const commitment = await payoutCommitment(payout, payrollBatch.batchId);
   const batchRoot = await batchCommitment(payrollBatch);
   const contextHash = await fieldHash(
-    `disclosure:${payrollBatch.batchId}:${payout.id}:Acme Audit LLP:quarterly-payroll-review`
+    `disclosure:${payrollBatch.batchId}:${payout.id}:Tandem Audit LLP:quarterly-payroll-review`
   );
   return {
     version: 1,
     circuit: "ProofPaySelectiveDisclosure-v0",
     context: {
       batchId: payrollBatch.batchId,
-      authority: "Acme Audit LLP",
+      authority: "Tandem Audit LLP",
       purpose: "quarterly-payroll-review",
       issuedAt: new Date().toISOString(),
     },
@@ -177,11 +177,11 @@ function renderRows() {
     .map(
       (payout) => `
       <tr>
-        <td><strong>${payout.name}</strong><br><code>${payout.id}</code></td>
-        <td>${payout.country}</td>
-        <td><code>${payout.stellarAddress.slice(0, 8)}...${payout.stellarAddress.slice(-5)}</code></td>
-        <td><span class="masked">${payout.amount}</span></td>
-        <td><span class="ok">KYC + clear</span></td>
+        <td data-label="Recipient"><strong>${payout.name}</strong><br><code>${payout.id}</code></td>
+        <td data-label="Region">${payout.country}</td>
+        <td data-label="Address"><code>${payout.stellarAddress.slice(0, 8)}...${payout.stellarAddress.slice(-5)}</code></td>
+        <td data-label="Private amount"><span class="masked">${payout.amount}</span></td>
+        <td data-label="Policy"><span class="ok">KYC + clear</span></td>
       </tr>`
     )
     .join("");
@@ -200,12 +200,20 @@ async function renderInitial() {
 }
 
 $("prove-button").addEventListener("click", async () => {
-  $("prove-button").disabled = true;
-  $("proof-seal").textContent = "Generating...";
-  state.proof = await generateProof();
-  $("proof-seal").textContent = `${state.proof.proof.slice(0, 18)}...${state.proof.proof.slice(-12)}`;
-  $("step-proof").classList.add("active");
-  $("submit-button").disabled = false;
+  try {
+    $("prove-button").disabled = true;
+    $("action-note").textContent = "Checking witness and deriving public inputs.";
+    $("proof-seal").textContent = "Generating...";
+    state.proof = await generateProof();
+    $("proof-seal").textContent = `${state.proof.proof.slice(0, 18)}...${state.proof.proof.slice(-12)}`;
+    $("step-proof").classList.add("active");
+    $("submit-button").disabled = false;
+    $("action-note").textContent = "Proof is ready. Submit the batch to mark it accepted.";
+  } catch (error) {
+    $("prove-button").disabled = false;
+    $("proof-seal").textContent = "Error";
+    $("action-note").textContent = error instanceof Error ? error.message : "Proof generation failed.";
+  }
 });
 
 $("submit-button").addEventListener("click", () => {
@@ -216,11 +224,21 @@ $("submit-button").addEventListener("click", () => {
   $("step-chain").classList.add("active");
   $("submit-button").disabled = true;
   $("receipt-button").disabled = false;
+  $("action-note").textContent = "Batch accepted. Generate an auditor receipt for one payout.";
 });
 
 $("receipt-button").addEventListener("click", async () => {
-  const receipt = await createDisclosureReceipt(payrollBatch.payouts[0]);
-  $("receipt-output").textContent = JSON.stringify(receipt, null, 2);
+  try {
+    $("receipt-button").disabled = true;
+    $("receipt-output").textContent = "Preparing selective disclosure receipt...";
+    const receipt = await createDisclosureReceipt(payrollBatch.payouts[0]);
+    $("receipt-output").textContent = JSON.stringify(receipt, null, 2);
+  } catch (error) {
+    $("receipt-output").textContent =
+      error instanceof Error ? error.message : "Receipt generation failed.";
+  } finally {
+    $("receipt-button").disabled = false;
+  }
 });
 
 renderInitial();

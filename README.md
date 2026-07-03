@@ -43,6 +43,12 @@ npm run serve
 
 Open http://localhost:4173 after `npm run serve`.
 
+The minimalist landing page is available at:
+
+```text
+http://localhost:4173/landing.html
+```
+
 The local UI demo uses a deterministic proof envelope so judges can run it
 without a Stellar RPC. `npm run proof:noir` generates and verifies a real
 Noir/UltraHonk proof, then exports the proof, public inputs, and verifying key

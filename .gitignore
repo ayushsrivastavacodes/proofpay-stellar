@@ -4,3 +4,4 @@ target/
 .DS_Store
 *.log
 proofpay-demo-state.json
+.vercel

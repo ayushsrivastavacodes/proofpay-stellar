@@ -1,0 +1,14 @@
+.git
+.vercel
+.DS_Store
+node_modules
+contracts
+tools
+noir
+artifacts
+circuits
+shared
+scripts
+*.md
+package.json
+package-lock.json

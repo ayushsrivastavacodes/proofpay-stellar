@@ -13,6 +13,8 @@ scaffolding for the real Stellar ZK integration.
 - `npm run contract:build` compiles the ProofPay Soroban contract to wasm when
   the Stellar CLI, Rustup, and `wasm32v1-none` target are installed.
 - `npm run serve` serves the landing page and payout console.
+- The ProofPay adapter contract is deployed on Stellar testnet at
+  `CD77FKSOPNONXZNMTRZE5YDRTEI7ZR6PYFCQYJILXQZI6TPV6FYO4E23`.
 - `shared/proofpay.mjs` validates batch policy, derives deterministic public
   inputs, rejects replay, rejects tampered disclosure receipts, and rejects proof
   envelopes that do not match the public inputs.
@@ -37,14 +39,21 @@ scaffolding for the real Stellar ZK integration.
 - `npm run proof:noir`
 - `npm run contract:build`
 
+## Verified on testnet
+
+- Contract deployed:
+  `CD77FKSOPNONXZNMTRZE5YDRTEI7ZR6PYFCQYJILXQZI6TPV6FYO4E23`
+- `roots` returns the configured KYC and blocked-list roots.
+
 ## Not yet complete
 
 - Circom compilation and Groth16 proof generation are not part of the primary
   path. The Circom files remain sketches for a future Groth16/Privacy Pools
   variant.
-- The ProofPay contract calls a generic verifier adapter. The next integration
-  step is deploying a Stellar UltraHonk verifier contract and passing the
-  generated Noir proof bytes and public inputs through that adapter.
+- The deployed ProofPay contract currently uses a temporary verifier placeholder.
+  The next integration step is deploying a Stellar UltraHonk verifier contract
+  and passing the generated Noir proof bytes and public inputs through that
+  adapter.
 
 ## Required next engineering step
 

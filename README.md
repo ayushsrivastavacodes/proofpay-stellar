@@ -70,6 +70,24 @@ ProofPay Soroban contract to wasm.
 - [IMPLEMENTATION_STATUS.md](./IMPLEMENTATION_STATUS.md) separates executable
   code from source-level scaffolding.
 
+## Testnet Contract
+
+ProofPay adapter contract on Stellar testnet:
+
+```text
+CD77FKSOPNONXZNMTRZE5YDRTEI7ZR6PYFCQYJILXQZI6TPV6FYO4E23
+```
+
+Explorer:
+
+```text
+https://lab.stellar.org/r/testnet/contract/CD77FKSOPNONXZNMTRZE5YDRTEI7ZR6PYFCQYJILXQZI6TPV6FYO4E23
+```
+
+The adapter is deployed and initialized with the demo compliance roots. It uses
+a temporary verifier placeholder until the UltraHonk verifier contract is
+deployed.
+
 ## Verification Status
 
 See [IMPLEMENTATION_STATUS.md](./IMPLEMENTATION_STATUS.md) for the exact split

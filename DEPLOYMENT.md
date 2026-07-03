@@ -59,14 +59,72 @@ Current verified wasm hash:
 341da078db8895956c1199c72ad82a4af46c88c5ae4f371ead023e02be7a64f0
 ```
 
-## What Is Not Deployed Yet
+## What Is Deployed
 
-The repo does not currently include a live testnet deployment address. The next step is to deploy or vendor a Stellar UltraHonk verifier contract, then connect ProofPay to that verifier address.
+The ProofPay adapter contract is deployed on Stellar testnet. The next step is
+to deploy or vendor a Stellar UltraHonk verifier contract, then connect ProofPay
+to that verifier address.
 
 The core project is still useful for judging because it includes:
 
 - real Noir proof generation and verification
 - generated proof artifacts
 - Soroban contract source
-- successful Soroban wasm build
+- successful Soroban wasm build and testnet deployment
 - a working product app flow
+
+## Testnet Deployment
+
+ProofPay adapter contract:
+
+```text
+CD77FKSOPNONXZNMTRZE5YDRTEI7ZR6PYFCQYJILXQZI6TPV6FYO4E23
+```
+
+Explorer:
+
+```text
+https://lab.stellar.org/r/testnet/contract/CD77FKSOPNONXZNMTRZE5YDRTEI7ZR6PYFCQYJILXQZI6TPV6FYO4E23
+```
+
+Wasm upload transaction:
+
+```text
+https://stellar.expert/explorer/testnet/tx/f249c3e020d16df4c8e3f26ce56abc387fd78051c333745d419e4586d76a9ca0
+```
+
+Contract deployment transaction:
+
+```text
+https://stellar.expert/explorer/testnet/tx/3f42fee56b3dcb6d54e19c2852dcab68b9997f68d34285b79ac681030689732e
+```
+
+Constructor configuration:
+
+```text
+admin:    GDU4WHIL3N7ISCEMEBXWQKBJVJNUTMBK2PGQGYMAXS34TOYUNBOLT7BN
+verifier: GDU4WHIL3N7ISCEMEBXWQKBJVJNUTMBK2PGQGYMAXS34TOYUNBOLT7BN
+kyc_root: 8425791797386173461612178423803209042195791018538165848973966991927341408870
+blocked_root: 15176266821631068193760670691412429136168215003412106874011712206722057118973
+```
+
+Verification command:
+
+```bash
+stellar contract invoke \
+  --network testnet \
+  --source-account kompass-deployer \
+  --id CD77FKSOPNONXZNMTRZE5YDRTEI7ZR6PYFCQYJILXQZI6TPV6FYO4E23 \
+  -- roots
+```
+
+Verified output:
+
+```text
+["8425791797386173461612178423803209042195791018538165848973966991927341408870","15176266821631068193760670691412429136168215003412106874011712206722057118973"]
+```
+
+Important: the deployed adapter currently uses the deployer account as a
+temporary verifier placeholder. That is enough to prove the ProofPay Soroban
+contract is deployed and initialized on testnet, but `submit_batch` requires a
+real UltraHonk verifier contract to be deployed and wired in next.

@@ -1,0 +1,14 @@
+{
+  "name": "proofpay-stellar",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "demo": "node scripts/run-demo.mjs",
+    "test": "node scripts/e2e.test.mjs",
+    "serve": "node scripts/serve.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

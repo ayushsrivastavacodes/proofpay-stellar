@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ProofPay</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="topbar">
+        <div>
+          <p class="eyebrow">Stellar Testnet Demo</p>
+          <h1>ProofPay</h1>
+        </div>
+        <div class="network-chip">
+          <span></span>
+          Soroban verifier ready
+        </div>
+      </section>
+
+      <section class="workspace">
+        <aside class="rail">
+          <div class="metric">
+            <span>Batch</span>
+            <strong id="batch-id">-</strong>
+          </div>
+          <div class="metric">
+            <span>Total</span>
+            <strong id="total">-</strong>
+          </div>
+          <div class="metric">
+            <span>Compliance cap</span>
+            <strong id="cap">-</strong>
+          </div>
+          <div class="metric">
+            <span>Recipients</span>
+            <strong id="count">-</strong>
+          </div>
+          <button id="prove-button" class="primary-button">Generate proof</button>
+          <button id="submit-button" class="secondary-button" disabled>Submit batch</button>
+        </aside>
+
+        <section class="panel ledger-panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Private rows</p>
+              <h2>Payroll batch</h2>
+            </div>
+            <span id="batch-state" class="state-pill">Draft</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Recipient</th>
+                  <th>Region</th>
+                  <th>Address</th>
+                  <th>Private amount</th>
+                  <th>Policy</th>
+                </tr>
+              </thead>
+              <tbody id="payroll-body"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel proof-panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Public inputs</p>
+              <h2>Verifier payload</h2>
+            </div>
+          </div>
+          <div class="hash-grid">
+            <label>KYC root <output id="kyc-root">-</output></label>
+            <label>Blocked root <output id="blocked-root">-</output></label>
+            <label>Batch commitment <output id="batch-root">-</output></label>
+            <label>Proof seal <output id="proof-seal">Waiting</output></label>
+          </div>
+          <div class="timeline">
+            <div class="step active" id="step-witness">Witness valid</div>
+            <div class="step" id="step-proof">Proof generated</div>
+            <div class="step" id="step-chain">Batch accepted</div>
+          </div>
+        </section>
+
+        <section class="panel auditor-panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Selective disclosure</p>
+              <h2>Auditor receipt</h2>
+            </div>
+            <button id="receipt-button" class="icon-button" disabled title="Generate receipt">
+              +
+            </button>
+          </div>
+          <pre id="receipt-output">Submit a batch, then generate an auditor receipt.</pre>
+        </section>
+      </section>
+    </main>
+    <script type="module" src="./app.mjs"></script>
+  </body>
+</html>

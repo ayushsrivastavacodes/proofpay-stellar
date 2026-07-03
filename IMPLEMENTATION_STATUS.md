@@ -12,7 +12,7 @@ scaffolding for the real Stellar ZK integration.
   `artifacts/noir/payroll_batch`.
 - `npm run contract:build` compiles the ProofPay Soroban contract to wasm when
   the Stellar CLI, Rustup, and `wasm32v1-none` target are installed.
-- `npm run serve` serves the static browser demo.
+- `npm run serve` serves the landing page and payout console.
 - `shared/proofpay.mjs` validates batch policy, derives deterministic public
   inputs, rejects replay, rejects tampered disclosure receipts, and rejects proof
   envelopes that do not match the public inputs.

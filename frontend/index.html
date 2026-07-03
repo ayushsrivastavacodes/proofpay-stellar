@@ -11,9 +11,9 @@
       <section class="topbar" aria-label="ProofPay overview">
         <div>
           <p class="eyebrow">ProofPay</p>
-          <h1>Payroll console</h1>
+          <h1>Payout console</h1>
           <p class="lede">
-            Build a private payout batch, generate a proof, and submit the public verifier payload.
+            Build a confidential stablecoin payout batch, generate a proof, and submit the public verifier payload.
           </p>
         </div>
         <div class="status-stack" aria-label="Project verification status">
@@ -37,7 +37,7 @@
             <strong id="total">-</strong>
           </div>
           <div class="metric">
-            <span>Compliance cap</span>
+            <span>Per-recipient cap</span>
             <strong id="cap">-</strong>
           </div>
           <div class="metric">
@@ -52,8 +52,8 @@
         <section class="panel ledger-panel">
           <div class="panel-head">
             <div>
-              <p class="section-label">Private rows</p>
-              <h2>Payroll batch</h2>
+              <p class="section-label">Private payout rows</p>
+              <h2>Contractor batch</h2>
             </div>
             <span id="batch-state" class="state-pill">Draft</span>
           </div>
@@ -76,7 +76,7 @@
         <section class="panel proof-panel">
           <div class="panel-head">
             <div>
-              <p class="section-label">Public inputs</p>
+              <p class="section-label">Compliance console</p>
               <h2>Verifier payload</h2>
             </div>
           </div>
@@ -84,6 +84,7 @@
             <label>KYC root <output id="kyc-root">-</output></label>
             <label>Blocked root <output id="blocked-root">-</output></label>
             <label>Batch commitment <output id="batch-root">-</output></label>
+            <label>Visible policy <output id="visible-policy">Cap, roots, total</output></label>
             <label>Proof seal <output id="proof-seal">Waiting</output></label>
           </div>
           <div class="timeline">

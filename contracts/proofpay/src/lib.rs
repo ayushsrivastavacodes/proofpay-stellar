@@ -2,7 +2,7 @@
 
 use soroban_sdk::{
     contract, contractclient, contracterror, contractevent, contractimpl, contracttype, Address,
-    Bytes, Env, Vec, U256,
+    Bytes, Env, U256,
 };
 
 #[contracterror]
@@ -16,6 +16,16 @@ pub enum Error {
     BadProof = 5,
     BatchAlreadyUsed = 6,
     InvalidPublicInputs = 7,
+}
+
+#[contracterror]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd, Ord)]
+#[repr(u32)]
+pub enum VerifierError {
+    VkParseError = 1,
+    ProofParseError = 2,
+    VerificationFailed = 3,
+    VkNotSet = 4,
 }
 
 #[contracttype]
@@ -34,6 +44,7 @@ pub struct PublicInputs {
 #[derive(Clone)]
 pub struct PayrollProof {
     pub proof: Bytes,
+    pub public_inputs: Bytes,
     pub inputs: PublicInputs,
 }
 
@@ -57,14 +68,13 @@ pub struct PayrollBatchAccepted {
     pub asset_hash: U256,
 }
 
-#[contractclient(crate_path = "soroban_sdk", name = "ProofVerifierClient")]
-pub trait ProofVerifier {
-    /// Verifier adapter interface.
-    ///
-    /// A production deployment should implement this with the concrete Groth16
-    /// verifier contract and exact proof/public-input types generated from the
-    /// final circuit.
-    fn verify(env: Env, proof: Bytes, public_inputs: Vec<U256>) -> bool;
+#[contractclient(crate_path = "soroban_sdk", name = "UltraHonkVerifierClient")]
+pub trait UltraHonkVerifier {
+    fn verify_proof(
+        env: Env,
+        public_inputs: Bytes,
+        proof_bytes: Bytes,
+    ) -> Result<(), VerifierError>;
 }
 
 #[contract]
@@ -112,9 +122,66 @@ impl ProofPay {
         payroll_proof: PayrollProof,
     ) -> Result<(), Error> {
         sender.require_auth();
-        Self::require_initialized(&env)?;
+        Self::accept_batch(
+            &env,
+            payroll_proof.inputs,
+            payroll_proof.public_inputs,
+            payroll_proof.proof,
+        )
+    }
 
-        let inputs = payroll_proof.inputs.clone();
+    pub fn submit_noir_batch(
+        env: Env,
+        sender: Address,
+        proof: Bytes,
+        public_inputs: Bytes,
+        batch_id_hash: U256,
+        batch_commitment: U256,
+        total: u128,
+        cap: u128,
+        asset_hash: U256,
+        kyc_root: U256,
+        blocked_root: U256,
+    ) -> Result<(), Error> {
+        sender.require_auth();
+        Self::accept_batch(
+            &env,
+            PublicInputs {
+                batch_id_hash,
+                batch_commitment,
+                total,
+                cap,
+                asset_hash,
+                kyc_root,
+                blocked_root,
+            },
+            public_inputs,
+            proof,
+        )
+    }
+
+    pub fn is_batch_used(env: Env, batch_id_hash: U256) -> bool {
+        env.storage()
+            .persistent()
+            .has(&DataKey::UsedBatch(batch_id_hash))
+    }
+
+    pub fn roots(env: Env) -> Result<(U256, U256), Error> {
+        Self::require_initialized(&env)?;
+        Ok((
+            env.storage().instance().get(&DataKey::KycRoot).unwrap(),
+            env.storage().instance().get(&DataKey::BlockedRoot).unwrap(),
+        ))
+    }
+
+    fn accept_batch(
+        env: &Env,
+        inputs: PublicInputs,
+        public_inputs: Bytes,
+        proof: Bytes,
+    ) -> Result<(), Error> {
+        Self::require_initialized(env)?;
+
         if inputs.total == 0 || inputs.cap == 0 {
             return Err(Error::InvalidPublicInputs);
         }
@@ -134,6 +201,10 @@ impl ProofPay {
             return Err(Error::BadRoots);
         }
 
+        if public_inputs != Self::noir_public_inputs(env, &inputs) {
+            return Err(Error::InvalidPublicInputs);
+        }
+
         let used_key = DataKey::UsedBatch(inputs.batch_id_hash.clone());
         if env.storage().persistent().has(&used_key) {
             return Err(Error::BatchAlreadyUsed);
@@ -144,12 +215,8 @@ impl ProofPay {
             .instance()
             .get(&DataKey::Verifier)
             .ok_or(Error::NotInitialized)?;
-        let verifier_client = ProofVerifierClient::new(&env, &verifier);
-        let public_vec = Self::public_inputs_vec(&env, &inputs);
-
-        if !verifier_client.verify(&payroll_proof.proof, &public_vec) {
-            return Err(Error::BadProof);
-        }
+        let verifier_client = UltraHonkVerifierClient::new(env, &verifier);
+        verifier_client.verify_proof(&public_inputs, &proof);
 
         env.storage().persistent().set(&used_key, &true);
 
@@ -159,34 +226,18 @@ impl ProofPay {
             total: inputs.total,
             asset_hash: inputs.asset_hash,
         }
-        .publish(&env);
+        .publish(env);
 
         Ok(())
     }
 
-    pub fn is_batch_used(env: Env, batch_id_hash: U256) -> bool {
-        env.storage()
-            .persistent()
-            .has(&DataKey::UsedBatch(batch_id_hash))
-    }
-
-    pub fn roots(env: Env) -> Result<(U256, U256), Error> {
-        Self::require_initialized(&env)?;
-        Ok((
-            env.storage().instance().get(&DataKey::KycRoot).unwrap(),
-            env.storage().instance().get(&DataKey::BlockedRoot).unwrap(),
-        ))
-    }
-
-    fn public_inputs_vec(env: &Env, inputs: &PublicInputs) -> Vec<U256> {
-        let mut out = Vec::new(env);
-        out.push_back(inputs.batch_id_hash.clone());
-        out.push_back(inputs.batch_commitment.clone());
-        out.push_back(U256::from_u128(env, inputs.total));
-        out.push_back(U256::from_u128(env, inputs.cap));
-        out.push_back(inputs.asset_hash.clone());
-        out.push_back(inputs.kyc_root.clone());
-        out.push_back(inputs.blocked_root.clone());
+    fn noir_public_inputs(env: &Env, inputs: &PublicInputs) -> Bytes {
+        let mut out = Bytes::new(env);
+        out.append(&U256::from_u128(env, inputs.total).to_be_bytes());
+        out.append(&U256::from_u128(env, inputs.cap).to_be_bytes());
+        out.append(&inputs.kyc_root.to_be_bytes());
+        out.append(&inputs.blocked_root.to_be_bytes());
+        out.append(&inputs.batch_commitment.to_be_bytes());
         out
     }
 

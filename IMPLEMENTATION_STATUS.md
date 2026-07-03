@@ -13,18 +13,23 @@ scaffolding for the real Stellar ZK integration.
 - `npm run contract:build` compiles the ProofPay Soroban contract to wasm when
   the Stellar CLI, Rustup, and `wasm32v1-none` target are installed.
 - `npm run serve` serves the landing page and payout console.
-- The ProofPay adapter contract is deployed on Stellar testnet at
-  `CD77FKSOPNONXZNMTRZE5YDRTEI7ZR6PYFCQYJILXQZI6TPV6FYO4E23`.
+- The UltraHonk verifier contract is deployed on Stellar testnet at
+  `CDSL6BD57VNVT2D5DTVXISNW3HZK2IFYOZSBELZ46Q6LGDVVPECTBSME`.
+- The final ProofPay adapter contract is deployed on Stellar testnet at
+  `CCQEKN4T6CUGF7UXGCMJ2ERJI2T3IMWB374CD54D3D6WBS57FZ5A4YI5`.
+- The final ProofPay adapter accepted a real Noir/UltraHonk proof on testnet in
+  transaction `559dc057f10dae156e53179ba8329c9d29be1e7cb921e6a786c8731fc3e2f3c1`.
 - `shared/proofpay.mjs` validates batch policy, derives deterministic public
   inputs, rejects replay, rejects tampered disclosure receipts, and rejects proof
   envelopes that do not match the public inputs.
 
 ## Source-level scaffold
 
-- `contracts/proofpay/src/lib.rs` is a Soroban contract adapter following the
-  documented contract structure: auth via `Address::require_auth`, instance
-  storage for small config, persistent per-batch replay keys, generated
-  cross-contract client, and contract events.
+- `contracts/proofpay/src/lib.rs` is a Soroban contract adapter that calls the
+  deployed UltraHonk verifier through `verify_proof(public_inputs, proof_bytes)`,
+  validates the public-input bytes against the structured batch fields, requires
+  sender/admin auth where needed, persists per-batch replay keys, and emits
+  contract events.
 - `circuits/*.circom` are circuit sketches. They are not complete production
   circuits yet because the Merkle membership/non-membership constraints and
   batch-root computation are intentionally marked as placeholders.
@@ -41,24 +46,27 @@ scaffolding for the real Stellar ZK integration.
 
 ## Verified on testnet
 
-- Contract deployed:
-  `CD77FKSOPNONXZNMTRZE5YDRTEI7ZR6PYFCQYJILXQZI6TPV6FYO4E23`
-- `roots` returns the configured KYC and blocked-list roots.
+- Verifier deployed:
+  `CDSL6BD57VNVT2D5DTVXISNW3HZK2IFYOZSBELZ46Q6LGDVVPECTBSME`
+- Final adapter deployed:
+  `CCQEKN4T6CUGF7UXGCMJ2ERJI2T3IMWB374CD54D3D6WBS57FZ5A4YI5`
+- `roots` returns `["15","0"]`.
+- `submit_noir_batch` accepted `artifacts/noir/payroll_batch/proof` with
+  matching `public_inputs`, emitted `PayrollBatchAccepted`, and `is_batch_used`
+  returns `true` for batch id `2026070302`.
 
 ## Not yet complete
 
 - Circom compilation and Groth16 proof generation are not part of the primary
   path. The Circom files remain sketches for a future Groth16/Privacy Pools
   variant.
-- The deployed ProofPay contract currently uses a temporary verifier placeholder.
-  The next integration step is deploying a Stellar UltraHonk verifier contract
-  and passing the generated Noir proof bytes and public inputs through that
-  adapter.
+- The browser app still uses a deterministic local proof envelope for judge UX.
+  The real ZK path is available through `npm run proof:noir` and the deployed
+  testnet verifier transaction.
 
 ## Required next engineering step
 
-Deploy or vendor a Stellar UltraHonk verifier contract, load
-`artifacts/noir/payroll_batch/vk` as its verifying key, then invoke
-`submit_batch` with `artifacts/noir/payroll_batch/proof` and the matching public
-inputs. After that, replace the simple policy-root checks with full Merkle
-membership/non-membership constraints for a production-grade ASP model.
+Replace the simple v1 Noir policy-root arithmetic with full Merkle
+membership/non-membership constraints for a production-grade ASP model, then
+connect the browser app to a Stellar wallet/RPC submit flow instead of the local
+simulator.

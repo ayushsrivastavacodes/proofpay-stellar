@@ -6,8 +6,8 @@ ProofPay lets an organization submit a stablecoin payout batch where individual
 amounts stay private but compliance policy remains publicly verifiable. Payroll
 is the first use case; the same pattern also fits contractor payouts, supplier
 payments, grants, and aid disbursements. The browser app is runnable without
-RPC, the Noir circuit generates a real UltraHonk proof, and the Soroban contract
-compiles to a Stellar wasm adapter that can call an on-chain proof verifier.
+RPC, the Noir circuit generates a real UltraHonk proof, and the Soroban adapter
+has been deployed on Stellar testnet calling an on-chain UltraHonk verifier.
 
 ## What the ZK proof proves
 
@@ -69,24 +69,38 @@ ProofPay Soroban contract to wasm.
   the hackathon video.
 - [IMPLEMENTATION_STATUS.md](./IMPLEMENTATION_STATUS.md) separates executable
   code from source-level scaffolding.
+- [VERIFICATION_REPORT.md](./VERIFICATION_REPORT.md) records the cloned
+  references, line-level contract audit, and testnet proof evidence.
 
-## Testnet Contract
+## Testnet Contracts
 
-ProofPay adapter contract on Stellar testnet:
+Final ProofPay adapter contract on Stellar testnet:
 
 ```text
-CD77FKSOPNONXZNMTRZE5YDRTEI7ZR6PYFCQYJILXQZI6TPV6FYO4E23
+CCQEKN4T6CUGF7UXGCMJ2ERJI2T3IMWB374CD54D3D6WBS57FZ5A4YI5
 ```
 
 Explorer:
 
 ```text
-https://lab.stellar.org/r/testnet/contract/CD77FKSOPNONXZNMTRZE5YDRTEI7ZR6PYFCQYJILXQZI6TPV6FYO4E23
+https://lab.stellar.org/r/testnet/contract/CCQEKN4T6CUGF7UXGCMJ2ERJI2T3IMWB374CD54D3D6WBS57FZ5A4YI5
 ```
 
-The adapter is deployed and initialized with the demo compliance roots. It uses
-a temporary verifier placeholder until the UltraHonk verifier contract is
-deployed.
+UltraHonk verifier contract on Stellar testnet:
+
+```text
+CDSL6BD57VNVT2D5DTVXISNW3HZK2IFYOZSBELZ46Q6LGDVVPECTBSME
+```
+
+Real ProofPay proof submission transaction:
+
+```text
+https://stellar.expert/explorer/testnet/tx/559dc057f10dae156e53179ba8329c9d29be1e7cb921e6a786c8731fc3e2f3c1
+```
+
+The final adapter was initialized with the Noir circuit roots `15` and `0`,
+calls the deployed UltraHonk verifier, records a replay guard, and emitted
+`PayrollBatchAccepted` for batch id `2026070302`.
 
 ## Verification Status
 
@@ -95,12 +109,12 @@ between executable demo code and source-level Stellar/Circom scaffolding.
 
 ## Real Stellar Integration Path
 
-1. Deploy a Noir UltraHonk verifier contract on Stellar, using the generated
-   verifying key from `artifacts/noir/payroll_batch/vk`.
-2. Deploy `contracts/proofpay` with that verifier address and compliance roots.
-3. Submit `artifacts/noir/payroll_batch/proof` and the matching public inputs to
-   `submit_batch`.
-4. For a fuller privacy-pool version, replace the simple Noir policy-root
+1. Generate the Noir proof artifacts under `artifacts/noir/payroll_batch`.
+2. Deploy the UltraHonk verifier with `artifacts/noir/payroll_batch/vk`.
+3. Deploy `contracts/proofpay` with that verifier address and the circuit roots.
+4. Submit `artifacts/noir/payroll_batch/proof` and matching public inputs to
+   `submit_noir_batch`.
+5. For a fuller privacy-pool version, replace the simple Noir policy-root
    checks with Merkle membership/non-membership constraints from the Circom
    sketches and Stellar Private Payments references.
 
@@ -115,7 +129,7 @@ between executable demo code and source-level Stellar/Circom scaffolding.
 ## Security note
 
 This is hackathon software. The local browser proof envelope is not
-cryptographic ZK; it exists to make the E2E product flow runnable without wallet
-or RPC setup. The Noir proof path is real, but production use still requires a
-complete verifier deployment, audited circuits, audited contracts, and careful
-compliance review.
+cryptographic ZK; it exists to make the product flow runnable without wallet
+or RPC setup. The Noir proof path and Stellar testnet verifier transaction are
+real, but production use still requires audited circuits, audited contracts, a
+real Merkle/ASP policy circuit, and careful compliance review.

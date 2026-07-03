@@ -4,7 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "contract:build": "cd contracts/proofpay && PATH=\"/opt/homebrew/opt/rustup/bin:$PATH\" stellar contract build",
     "demo": "node scripts/run-demo.mjs",
+    "proof:noir": "node scripts/build-noir-proof.mjs",
     "test": "node scripts/e2e.test.mjs",
     "serve": "node scripts/serve.mjs"
   },

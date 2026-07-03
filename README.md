@@ -3,9 +3,9 @@
 Compliance-private payroll on Stellar.
 
 ProofPay lets an employer submit a stablecoin payroll batch where individual
-salary amounts stay private. The runnable demo uses a deterministic proof
-envelope, and the included Soroban/Circom scaffold shows where a real on-chain
-Groth16 verifier plugs in.
+salary amounts stay private. The browser demo is runnable without RPC, the Noir
+circuit generates a real UltraHonk proof, and the Soroban contract compiles to a
+Stellar wasm adapter that can call an on-chain proof verifier.
 
 ## What the ZK proof proves
 
@@ -22,9 +22,11 @@ For a private payroll batch, the proof binds these public claims:
 ## Repo layout
 
 ```text
-circuits/              Circom circuit source for the payroll proof
+artifacts/             Generated Noir proof, public inputs, and verifying key
+circuits/              Circom circuit sketches for the payroll proof
 contracts/proofpay/    Soroban contract source
 frontend/              Static browser demo
+noir/payroll_batch/    Real Noir payroll proof circuit
 scripts/               Local demo, test, and server scripts
 shared/                Deterministic proof engine and sample data
 ```
@@ -34,15 +36,18 @@ shared/                Deterministic proof engine and sample data
 ```bash
 npm test
 npm run demo
+npm run proof:noir
+npm run contract:build
 npm run serve
 ```
 
 Open http://localhost:4173 after `npm run serve`.
 
-The local demo uses a deterministic proof envelope so judges can run it without
-installing Circom, snarkjs, Rust, or a Stellar RPC. The source also includes the
-Circom circuit and Soroban contract that show the intended on-chain verifier
-integration.
+The local UI demo uses a deterministic proof envelope so judges can run it
+without a Stellar RPC. `npm run proof:noir` generates and verifies a real
+Noir/UltraHonk proof, then exports the proof, public inputs, and verifying key
+to `artifacts/noir/payroll_batch`. `npm run contract:build` compiles the
+ProofPay Soroban contract to wasm.
 
 ## Verification status
 
@@ -51,13 +56,14 @@ between executable demo code and source-level Stellar/Circom scaffolding.
 
 ## Real Stellar integration path
 
-1. Compile `circuits/payroll_batch.circom` with Circom/snarkjs.
-2. Generate Groth16 proving and verification keys.
-3. Deploy a Groth16 verifier contract on Stellar.
-4. Deploy `contracts/proofpay` with the verifier address and compliance roots.
-5. Replace the local proof envelope in `shared/proofpay.mjs` with real
-   `proof.json` and `public.json` produced by snarkjs.
-6. Call `submit_batch` on the Soroban contract with the proof and public inputs.
+1. Deploy a Noir UltraHonk verifier contract on Stellar, using the generated
+   verifying key from `artifacts/noir/payroll_batch/vk`.
+2. Deploy `contracts/proofpay` with that verifier address and compliance roots.
+3. Submit `artifacts/noir/payroll_batch/proof` and the matching public inputs to
+   `submit_batch`.
+4. For a fuller privacy-pool version, replace the simple Noir policy-root
+   checks with Merkle membership/non-membership constraints from the Circom
+   sketches and Stellar Private Payments references.
 
 ## Demo narrative
 
@@ -69,7 +75,8 @@ between executable demo code and source-level Stellar/Circom scaffolding.
 
 ## Security note
 
-This is hackathon software. The local proof envelope is not cryptographic ZK.
-It exists to make the E2E product flow runnable. Production use requires a real
-Groth16 setup, audited circuits, audited contracts, and careful compliance
-review.
+This is hackathon software. The local browser proof envelope is not
+cryptographic ZK; it exists to make the E2E product flow runnable without wallet
+or RPC setup. The Noir proof path is real, but production use still requires a
+complete verifier deployment, audited circuits, audited contracts, and careful
+compliance review.

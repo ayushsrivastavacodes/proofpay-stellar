@@ -2,7 +2,7 @@
 
 use soroban_sdk::{
     contract, contractclient, contracterror, contractevent, contractimpl, contracttype, Address,
-    Bytes, Env, U256, Vec,
+    Bytes, Env, Vec, U256,
 };
 
 #[contracterror]
@@ -85,7 +85,9 @@ impl ProofPay {
         env.storage().instance().set(&DataKey::Admin, &admin);
         env.storage().instance().set(&DataKey::Verifier, &verifier);
         env.storage().instance().set(&DataKey::KycRoot, &kyc_root);
-        env.storage().instance().set(&DataKey::BlockedRoot, &blocked_root);
+        env.storage()
+            .instance()
+            .set(&DataKey::BlockedRoot, &blocked_root);
         Ok(())
     }
 
@@ -98,11 +100,17 @@ impl ProofPay {
         admin.require_auth();
         Self::require_admin(&env, &admin)?;
         env.storage().instance().set(&DataKey::KycRoot, &kyc_root);
-        env.storage().instance().set(&DataKey::BlockedRoot, &blocked_root);
+        env.storage()
+            .instance()
+            .set(&DataKey::BlockedRoot, &blocked_root);
         Ok(())
     }
 
-    pub fn submit_batch(env: Env, sender: Address, payroll_proof: PayrollProof) -> Result<(), Error> {
+    pub fn submit_batch(
+        env: Env,
+        sender: Address,
+        payroll_proof: PayrollProof,
+    ) -> Result<(), Error> {
         sender.require_auth();
         Self::require_initialized(&env)?;
 
@@ -163,7 +171,7 @@ impl ProofPay {
     }
 
     pub fn roots(env: Env) -> Result<(U256, U256), Error> {
-            Self::require_initialized(&env)?;
+        Self::require_initialized(&env)?;
         Ok((
             env.storage().instance().get(&DataKey::KycRoot).unwrap(),
             env.storage().instance().get(&DataKey::BlockedRoot).unwrap(),

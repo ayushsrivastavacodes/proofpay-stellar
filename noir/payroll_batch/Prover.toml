@@ -1,0 +1,10 @@
+total = 4335
+cap = 1200
+kyc_root = "15"
+blocked_root = "0"
+batch_commitment = "5850"
+
+amounts = [875, 640, 990, 720, 1110]
+kyc_leaves = ["1", "2", "3", "4", "5"]
+blocked_leaves = ["0", "0", "0", "0", "0"]
+payout_salts = ["100", "200", "300", "400", "500"]

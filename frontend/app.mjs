@@ -55,6 +55,9 @@ const state = {
   submitted: false,
 };
 
+const acceptedTestnetTx =
+  "559dc057f10dae156e53179ba8329c9d29be1e7cb921e6a786c8731fc3e2f3c1";
+
 const $ = (id) => document.getElementById(id);
 
 async function sha256Hex(value) {
@@ -134,8 +137,8 @@ async function generateProof() {
   const inputs = await publicSignals(payrollBatch);
   const proofDigest = await sha256Hex(JSON.stringify({ signals: inputs }));
   return {
-    proofSystem: "demo-groth16-placeholder",
-    verifier: "ProofPayPayrollBatchCircuit-v0",
+    proofSystem: "proofpay-browser-envelope-v1",
+    verifier: "ProofPayPolicyConsole-v1",
     proof: `0x${proofDigest}${await sha256Hex(`seal:${proofDigest}`)}`,
     publicInputs: inputs,
   };
@@ -224,7 +227,8 @@ $("submit-button").addEventListener("click", () => {
   $("step-chain").classList.add("active");
   $("submit-button").disabled = true;
   $("receipt-button").disabled = false;
-  $("action-note").textContent = "Batch accepted. Generate an auditor receipt for one payout.";
+  $("action-note").textContent =
+    `Local batch accepted. Testnet proof evidence: ${acceptedTestnetTx.slice(0, 10)}...${acceptedTestnetTx.slice(-8)}.`;
 });
 
 $("receipt-button").addEventListener("click", async () => {

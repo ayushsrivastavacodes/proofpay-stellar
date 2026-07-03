@@ -1,7 +1,7 @@
 # Verification Report
 
 This report records the reference resources used to verify the final ProofPay
-adapter and the split between real testnet behavior and local demo behavior.
+adapter and the split between real testnet behavior and browser-console behavior.
 
 ## Cloned Reference Repos
 
@@ -20,6 +20,14 @@ for line-level checks:
 - `NethermindEth/stellar-private-payments`: privacy-pool architecture,
   proof/public-input extraction, browser-side proof generation context, and
   selective disclosure patterns.
+- `noir-lang/merkle`: canonical Noir Merkle path root computation using
+  sibling paths and little-endian leaf index bits.
+- `zk-kit/zk-kit.noir`: ordinary Merkle membership and sparse Merkle
+  non-membership design.
+- `polybase/payy`: production Noir MerklePath validation and sparse-tree privacy
+  architecture.
+- `sreeduggirala/burner` and `ultralane/circuits`: compact Noir Merkle proof
+  helpers for path index + sibling arrays.
 - `NethermindEth/stellar-risc0-verifier`: alternate ZK verifier architecture on
   Stellar, used as a comparison point but not used in ProofPay's final path.
 
@@ -60,25 +68,25 @@ File: `contracts/proofpay/src/lib.rs`
 
 ## Real Testnet Evidence
 
-UltraHonk verifier contract:
+Accepted v1 UltraHonk verifier contract:
 
 ```text
 CDSL6BD57VNVT2D5DTVXISNW3HZK2IFYOZSBELZ46Q6LGDVVPECTBSME
 ```
 
-Final ProofPay adapter contract:
+Accepted v1 ProofPay adapter contract:
 
 ```text
 CCQEKN4T6CUGF7UXGCMJ2ERJI2T3IMWB374CD54D3D6WBS57FZ5A4YI5
 ```
 
-Final adapter wasm hash:
+Adapter wasm hash:
 
 ```text
 841a237811b701dddcc7fcf31b429848339c6dce7f4d048273832f92d979b825
 ```
 
-Final proof transaction:
+Accepted v1 proof transaction:
 
 ```text
 https://stellar.expert/explorer/testnet/tx/559dc057f10dae156e53179ba8329c9d29be1e7cb921e6a786c8731fc3e2f3c1
@@ -91,24 +99,39 @@ roots -> ["15","0"]
 is_batch_used(2026070302) -> true
 ```
 
+Path-based Merkle verifier contract:
+
+```text
+CDG3SXXD3H6UOIZXBEMKWSURKWECS36RNSPERDYPLXDSSEFQWLDE7ZKL
+```
+
+Path-based Merkle adapter contract:
+
+```text
+CA3GXAZAB2QNERSOFLLHB7X63KTNK5KWHNLEJFMGNZEILZGJN3JGUBAA
+```
+
+The path-based proof verifies locally with Barretenberg. Direct testnet
+verification currently exceeds simulation budget, so there is no accepted
+path-based proof transaction.
+
 The deployer account was funded with Stellar testnet XLM through the Stellar
 testnet friendbot/CLI funding flow. No mainnet funds were used.
 
-## What Is Real vs Local
+## What Is Real vs Browser Console
 
 Real:
 
-- Noir/UltraHonk proof generation through `npm run proof:noir`
+- Path-based Noir/UltraHonk proof generation through `npm run proof:noir`
 - proof, public inputs, and VK artifacts under `artifacts/noir/payroll_batch`
-- UltraHonk verifier deployed on Stellar testnet
-- ProofPay adapter deployed on Stellar testnet
-- final proof accepted by ProofPay through the verifier on Stellar testnet
+- accepted compact v1 proof on Stellar testnet
+- path-based Merkle verifier and adapter deployed on Stellar testnet
 
-Local/demo:
+Browser console:
 
 - Browser payout console uses deterministic proof envelopes so judges can click
   through the product without wallet/RPC setup.
-- The current Noir circuit is a v1 policy statement, not the final
-  Privacy-Pools-style Merkle membership/non-membership circuit.
+- The path-based Merkle proof is not currently accepted on-chain because
+  UltraHonk verification for this larger circuit exceeds simulation budget.
 - The app UI is not yet submitting directly to wallet/RPC; the real submission
   is documented and reproducible through Stellar CLI.

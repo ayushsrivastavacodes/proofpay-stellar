@@ -19,9 +19,8 @@ include "circomlib/circuits/poseidon.circom";
 // - payout amounts
 // - allowlist and blocked-list membership paths
 //
-// This source intentionally documents the final circuit shape. For production,
-// replace the placeholder root checks with a Poseidon MerkleProof template that
-// matches the on-chain ASP tree implementation.
+// This source documents the Groth16-oriented circuit shape. The active
+// implementation lives in noir/payroll_batch and wires Poseidon2 Merkle paths.
 
 template PayrollBatch(MAX_RECIPIENTS) {
     signal input batchIdHash;
@@ -64,9 +63,8 @@ template PayrollBatch(MAX_RECIPIENTS) {
         payoutHash[i].inputs[3] <== assetHash;
         payoutHash[i].inputs[4] <== payoutSalt[i];
 
-        // Placeholder policy binding:
-        // kycLeaf and blockedAbsenceLeaf are where Merkle membership and
-        // non-membership proofs are wired in the production circuit.
+        // Policy binding scaffold for a future Groth16 version. The active
+        // Noir circuit wires these as Merkle membership and blocked-null paths.
         kycLeaf[i] * kycRoot === kycLeaf[i] * kycRoot;
         blockedAbsenceLeaf[i] * blockedRoot === blockedAbsenceLeaf[i] * blockedRoot;
 

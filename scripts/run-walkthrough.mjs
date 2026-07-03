@@ -20,8 +20,8 @@ const receipt = createDisclosureReceipt({
   purpose: "contractor-payment-sample",
 });
 
-console.log("ProofPay demo");
-console.log("-------------");
+console.log("ProofPay walkthrough");
+console.log("--------------------");
 console.log(`Employer: ${employer.name}`);
 console.log(`Batch: ${payrollBatch.batchId}`);
 console.log(`Asset: ${payrollBatch.asset}`);

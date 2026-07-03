@@ -47,6 +47,15 @@
           <p id="action-note" class="action-note">Generate the proof before submitting the batch.</p>
           <button id="prove-button" class="primary-button">Generate proof</button>
           <button id="submit-button" class="secondary-button" disabled>Submit batch</button>
+          <a
+            id="testnet-link"
+            class="secondary-link"
+            href="https://stellar.expert/explorer/testnet/tx/559dc057f10dae156e53179ba8329c9d29be1e7cb921e6a786c8731fc3e2f3c1"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Open testnet proof
+          </a>
         </aside>
 
         <section class="panel ledger-panel">
@@ -110,25 +119,25 @@
         <section class="panel artifact-panel">
           <div class="panel-head">
             <div>
-              <p class="section-label">Real proof artifacts</p>
-              <h2>Noir output</h2>
+              <p class="section-label">Stellar verification</p>
+              <h2>Live evidence</h2>
             </div>
           </div>
           <div class="artifact-grid">
             <div>
-              <span>Proof</span>
-              <strong>14.3 KB</strong>
-              <code>artifacts/noir/payroll_batch/proof</code>
+              <span>Accepted adapter</span>
+              <strong>On-chain</strong>
+              <code>CCQEKN4T6CUGF7UXGCMJ2ERJI2T3IMWB374CD54D3D6WBS57FZ5A4YI5</code>
             </div>
             <div>
-              <span>Public inputs</span>
-              <strong>160 B</strong>
-              <code>artifacts/noir/payroll_batch/public_inputs</code>
+              <span>Path Merkle verifier</span>
+              <strong>Deployed</strong>
+              <code>CDG3SXXD3H6UOIZXBEMKWSURKWECS36RNSPERDYPLXDSSEFQWLDE7ZKL</code>
             </div>
             <div>
-              <span>Verifying key</span>
-              <strong>1.7 KB</strong>
-              <code>artifacts/noir/payroll_batch/vk</code>
+              <span>Current Merkle proof</span>
+              <strong>Local verify</strong>
+              <code>UltraHonk path-based KYC + blocked-null proof exceeds testnet budget</code>
             </div>
           </div>
         </section>

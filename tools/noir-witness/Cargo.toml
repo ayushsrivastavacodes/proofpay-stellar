@@ -1,0 +1,9 @@
+[package]
+name = "proofpay-noir-witness"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+num-bigint = "0.4"
+soroban-poseidon = "26.0.0"
+soroban-sdk = { version = "26.1.0", features = ["testutils", "alloc"] }

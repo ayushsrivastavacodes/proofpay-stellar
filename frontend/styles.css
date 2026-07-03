@@ -209,7 +209,8 @@ h2 {
 }
 
 .primary-button,
-.secondary-button {
+.secondary-button,
+.secondary-link {
   width: 100%;
   min-height: 44px;
   margin-top: 12px;
@@ -223,12 +224,21 @@ h2 {
     border-color 160ms ease;
 }
 
+.secondary-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+  text-decoration: none;
+}
+
 .primary-button {
   background: var(--accent);
   color: #ffffff;
 }
 
-.secondary-button {
+.secondary-button,
+.secondary-link {
   background: var(--surface);
   color: var(--accent);
 }
@@ -237,12 +247,14 @@ h2 {
   background: #333333;
 }
 
-.secondary-button:hover:not(:disabled) {
+.secondary-button:hover:not(:disabled),
+.secondary-link:hover {
   background: var(--surface-soft);
 }
 
 .primary-button:active:not(:disabled),
 .secondary-button:active:not(:disabled),
+.secondary-link:active,
 .icon-button:active:not(:disabled) {
   transform: scale(0.98);
 }

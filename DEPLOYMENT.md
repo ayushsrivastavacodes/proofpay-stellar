@@ -30,6 +30,7 @@ artifacts/noir/payroll_batch/vk
 ```
 
 These are the artifacts consumed by the deployed Stellar UltraHonk verifier.
+The current artifacts are generated from the path-based Merkle circuit.
 
 ## Contract Deployment Shape
 
@@ -64,8 +65,9 @@ Current verified wasm hash:
 ## What Is Deployed
 
 The ProofPay adapter contract and the UltraHonk verifier contract are deployed
-on Stellar testnet. The final adapter calls the verifier with the generated Noir
-proof bytes and public-input bytes, then records the submitted batch id.
+on Stellar testnet. The accepted on-chain transaction uses the compact v1 proof.
+The current path-based Merkle proof verifies locally and has a verifier deployed,
+but direct on-chain verification exceeds the current testnet simulation budget.
 
 The core project is still useful for judging because it includes:
 
@@ -77,7 +79,7 @@ The core project is still useful for judging because it includes:
 
 ## Testnet Deployment
 
-Final ProofPay adapter contract:
+Accepted v1 ProofPay adapter contract:
 
 ```text
 CCQEKN4T6CUGF7UXGCMJ2ERJI2T3IMWB374CD54D3D6WBS57FZ5A4YI5
@@ -120,7 +122,7 @@ Direct verifier proof transaction:
 https://stellar.expert/explorer/testnet/tx/f94de966163032bf95c6b9796c337224abb81b5f08543da94284870ee54de826
 ```
 
-ProofPay adapter proof transaction:
+Accepted v1 ProofPay adapter proof transaction:
 
 ```text
 https://stellar.expert/explorer/testnet/tx/559dc057f10dae156e53179ba8329c9d29be1e7cb921e6a786c8731fc3e2f3c1
@@ -188,3 +190,59 @@ Verified output:
 ```text
 true
 ```
+
+## Path-Based Merkle Proof
+
+The current Noir circuit follows the Merkle path pattern from the reviewed
+Noir/Stellar references:
+
+- KYC: prove `hash(recipient_key, credential_secret)` is included under the
+  public KYC root using private sibling paths.
+- Blocked list: prove the leaf at the same private path is `0` under the public
+  blocked root.
+- Batch: prove hidden amounts are positive, under cap, sum to public total, and
+  bind into the public batch commitment.
+
+Generated public inputs:
+
+```text
+total:            4335
+cap:              1200
+kyc_root:         2690698580373620943275020322994090331635272929715942175495000391784299451578
+blocked_root:     15366428887851194658173001994030115403889500460316803633813719685335613213216
+batch_commitment: 20068219312705964598256362929344189003727442145966635737504581750707804407922
+```
+
+Merkle verifier deployment:
+
+```text
+CDG3SXXD3H6UOIZXBEMKWSURKWECS36RNSPERDYPLXDSSEFQWLDE7ZKL
+```
+
+Verifier deployment transaction:
+
+```text
+https://stellar.expert/explorer/testnet/tx/4538e1caaf2fa12914f15579124067a5357bbd23924988e499000c442826fc41
+```
+
+Adapter deployment for the Merkle roots:
+
+```text
+CA3GXAZAB2QNERSOFLLHB7X63KTNK5KWHNLEJFMGNZEILZGJN3JGUBAA
+```
+
+Adapter deployment transaction:
+
+```text
+https://stellar.expert/explorer/testnet/tx/d612a3fbb4c0ce8f04bce40d03e89366b339d47111d48b6fe964175a15383872
+```
+
+Attempting direct verifier invocation with the path-based Merkle proof currently
+fails during simulation with:
+
+```text
+HostError: Error(Budget, ExceededLimit)
+```
+
+This is why the accepted testnet transaction remains the compact v1 proof while
+the production-style Merkle statement is provided as locally verified artifacts.

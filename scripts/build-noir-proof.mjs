@@ -5,6 +5,7 @@ import path from "node:path";
 const circuitDir = path.resolve("noir/payroll_batch");
 const targetDir = path.join(circuitDir, "target");
 const artifactDir = path.resolve("artifacts/noir/payroll_batch");
+const witnessToolDir = path.resolve("tools/noir-witness");
 
 function run(cmd, args, cwd = circuitDir) {
   const result = spawnSync(cmd, args, {
@@ -17,6 +18,7 @@ function run(cmd, args, cwd = circuitDir) {
   }
 }
 
+run("cargo", ["run", "--quiet"], witnessToolDir);
 run("nargo", ["check"]);
 run("nargo", ["execute"]);
 

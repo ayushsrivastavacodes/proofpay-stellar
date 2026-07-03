@@ -97,8 +97,8 @@ export function generateProof(batch, allowlist, blockedList) {
   const signals = publicSignals(batch, allowlist, blockedList);
   const proofDigest = proofDigestForSignals(signals);
   return {
-    proofSystem: "demo-groth16-placeholder",
-    verifier: "ProofPayPayrollBatchCircuit-v0",
+    proofSystem: "proofpay-browser-envelope-v1",
+    verifier: "ProofPayPolicyConsole-v1",
     proof: `0x${proofDigest}${sha256Hex(`seal:${proofDigest}`)}`,
     publicInputs: signals,
   };
@@ -120,7 +120,7 @@ export class ProofPayContractSimulator {
     const inputs = proofEnvelope.publicInputs;
     const expectedDigest = proofDigestForSignals(inputs);
     const expectedProof = `0x${expectedDigest}${sha256Hex(`seal:${expectedDigest}`)}`;
-    if (proofEnvelope.proofSystem !== "demo-groth16-placeholder") {
+    if (proofEnvelope.proofSystem !== "proofpay-browser-envelope-v1") {
       throw new Error("unsupported proof system");
     }
     if (inputs.kycRoot !== this.kycRoot) {

@@ -41,12 +41,16 @@ npm run contract:build
 npm run serve
 ```
 
-Open http://localhost:4173 after `npm run serve`.
-
-The minimalist landing page is available at:
+Open the landing page after `npm run serve`:
 
 ```text
-http://localhost:4173/landing.html
+http://localhost:4173/
+```
+
+The product app is available at:
+
+```text
+http://localhost:4173/app
 ```
 
 The local UI demo uses a deterministic proof envelope so judges can run it

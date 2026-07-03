@@ -21,7 +21,11 @@ const server = http.createServer(async (req, res) => {
     const safePath = path
       .normalize(decodeURIComponent(parsed.pathname ?? "/"))
       .replace(/^(\.\.[/\\])+/, "");
-    const relative = safePath === "/" ? "index.html" : safePath.slice(1);
+    const routes = new Map([
+      ["/", "landing.html"],
+      ["/app", "index.html"],
+    ]);
+    const relative = routes.get(safePath) ?? safePath.slice(1);
     const filePath = path.join(root, relative);
     if (!filePath.startsWith(root)) {
       res.writeHead(403);

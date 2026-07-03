@@ -132,7 +132,7 @@
         color: var(--ink);
       }
 
-      .demo-frame {
+      .app-frame {
         width: 1280px;
         height: 820px;
         transform: scale(0.72);
@@ -141,21 +141,21 @@
       }
 
       @media (max-width: 1024px) {
-        .demo-crop {
+        .app-crop {
           height: 520px;
         }
 
-        .demo-frame {
+        .app-frame {
           transform: scale(0.56);
         }
       }
 
       @media (max-width: 640px) {
-        .demo-crop {
+        .app-crop {
           height: 430px;
         }
 
-        .demo-frame {
+        .app-frame {
           transform: scale(0.36);
         }
       }
@@ -188,7 +188,7 @@
           <button id="theme-toggle" class="btn btn-secondary min-h-9 px-3 text-sm" type="button">
             Theme
           </button>
-          <a href="./index.html" class="btn btn-primary min-h-9 text-sm">Open demo</a>
+          <a href="/app" class="btn btn-primary min-h-9 text-sm">Open app</a>
         </div>
       </nav>
     </header>
@@ -206,7 +206,7 @@
             ProofPay lets employers submit contractor payment batches while keeping individual amounts private and compliance checks verifiable.
           </p>
           <div class="mt-8 flex flex-col gap-3 sm:flex-row">
-            <a href="./index.html" class="btn btn-primary">Run the demo</a>
+            <a href="/app" class="btn btn-primary">Open app</a>
             <a href="https://github.com/ayushsrivastavacodes/proofpay-stellar" class="btn btn-secondary">View repo</a>
           </div>
         </div>
@@ -216,10 +216,10 @@
             <span class="h-2.5 w-2.5 rounded-full bg-[#e6e1d8]"></span>
             <span class="h-2.5 w-2.5 rounded-full bg-[#e6e1d8]"></span>
             <span class="h-2.5 w-2.5 rounded-full bg-[#e6e1d8]"></span>
-            <span class="ml-3 font-mono text-xs text-[color:var(--muted)]">frontend/index.html</span>
+            <span class="ml-3 font-mono text-xs text-[color:var(--muted)]">/app</span>
           </div>
-          <div class="demo-crop h-[590px] overflow-hidden rounded-md border" style="border-color: var(--line)">
-            <iframe class="demo-frame" src="./index.html" title="ProofPay interactive demo preview"></iframe>
+          <div class="app-crop h-[590px] overflow-hidden rounded-md border" style="border-color: var(--line)">
+            <iframe class="app-frame" src="/app" title="ProofPay app preview"></iframe>
           </div>
         </div>
       </section>
@@ -262,7 +262,7 @@
               Workflow
             </p>
             <h2 class="font-serif text-5xl font-bold leading-tight tracking-[-0.045em]">
-              Built for the hackathon demo path.
+              Built as a working payroll console.
             </h2>
           </div>
           <div class="divide-y" style="border-color: var(--line)">
@@ -279,9 +279,9 @@
               </p>
             </div>
             <div class="p-8">
-              <h3 class="font-bold">Run the browser demo</h3>
+              <h3 class="font-bold">Open the payroll console</h3>
               <p class="mt-2 leading-7 text-[color:var(--muted)]">
-                The UI demonstrates witness checks, submission state, and selective disclosure.
+                The app shows witness checks, submission state, and selective disclosure.
               </p>
             </div>
           </div>
@@ -321,10 +321,10 @@
               Review the proof path, then run it.
             </h2>
             <p class="mt-4 max-w-2xl leading-7 text-[color:var(--muted)]">
-              The landing page explains the project. The demo page shows the end-to-end product flow.
+              The landing page explains the project. The app shows the end-to-end product flow.
             </p>
           </div>
-          <a href="./index.html" class="btn btn-primary shrink-0">Open demo</a>
+          <a href="/app" class="btn btn-primary shrink-0">Open app</a>
         </div>
       </section>
     </main>
